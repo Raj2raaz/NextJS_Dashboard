@@ -1,7 +1,4 @@
 import { google } from "googleapis";
-import { Server } from "socket.io";
-
-let io;
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Method Not Allowed" });
@@ -19,32 +16,17 @@ export default async function handler(req, res) {
 
     const sheets = google.sheets({ version: "v4", auth });
     const spreadsheetId = process.env.SPREADSHEET_ID;
-    const range = "Sheet1!A1:Z"; // ✅ Fetch entire row range
+    const range = "Sheet1!A1:Z"; // ✅ Fetch all rows & columns
 
     console.log("Fetching data from Google Sheets...");
     
     const response = await sheets.spreadsheets.values.get({ spreadsheetId, range });
 
-    // ✅ Ensure all rows have the same number of columns (avoid UI mismatch)
     let rows = response.data.values || [];
+
+    // ✅ Ensure all rows have the same number of columns
     const maxColumns = Math.max(...rows.map(row => row.length));
-
-    rows = rows.map(row => [...row, ...Array(maxColumns - row.length).fill("")]); // ✅ Fill missing columns
-
-    // ✅ Start WebSocket server only once
-    if (!io) {
-      io = new Server(3001, { cors: { origin: "*" } });
-      console.log("WebSocket Server Started on Port 3001");
-
-      setInterval(async () => {
-        const updatedResponse = await sheets.spreadsheets.values.get({ spreadsheetId, range });
-        let updatedRows = updatedResponse.data.values || [];
-        const updatedMaxColumns = Math.max(...updatedRows.map(row => row.length));
-        updatedRows = updatedRows.map(row => [...row, ...Array(updatedMaxColumns - row.length).fill("")]);
-
-        io.emit("dataUpdated", updatedRows); // ✅ Send updates to frontend
-      }, 5000);
-    }
+    rows = rows.map(row => [...row, ...Array(maxColumns - row.length).fill("")]);
 
     res.status(200).json({ values: rows });
   } catch (error) {
