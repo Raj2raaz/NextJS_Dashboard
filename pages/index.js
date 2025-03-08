@@ -1,13 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-// import "../styles/globals.css"
+import axios from "axios";
 
 export default function Home() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    router.push("/dashboard");
+    const checkAuth = async () => {
+      try {
+        await axios.get("/api/auth/me");
+        router.push("/dashboard");
+      } catch (err) {
+        router.push("/login"); 
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
-  return <p>Redirecting to dashboard...</p>;
+  return <p>{loading ? "Checking authentication..." : "Redirecting..."}</p>;
 }

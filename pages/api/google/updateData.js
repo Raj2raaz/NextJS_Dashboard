@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import { Server } from "socket.io";
 
 let io;
 
@@ -28,7 +27,6 @@ export default async function handler(req, res) {
       resource: { values: data },
     });
 
-    // ✅ Emit event to notify all connected clients of the change
     if (io) {
       io.emit("dataUpdated", data);
     }

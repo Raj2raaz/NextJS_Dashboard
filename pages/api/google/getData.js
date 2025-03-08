@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
     const sheets = google.sheets({ version: "v4", auth });
     const spreadsheetId = process.env.SPREADSHEET_ID;
-    const range = "Sheet1!A1:Z"; // ✅ Fetch all rows & columns
+    const range = "Sheet1!A1:Z"; 
 
     console.log("Fetching data from Google Sheets...");
     
@@ -24,7 +24,6 @@ export default async function handler(req, res) {
 
     let rows = response.data.values || [];
 
-    // ✅ Ensure all rows have the same number of columns
     const maxColumns = Math.max(...rows.map(row => row.length));
     rows = rows.map(row => [...row, ...Array(maxColumns - row.length).fill("")]);
 
