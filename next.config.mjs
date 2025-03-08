@@ -2,7 +2,9 @@
 const nextConfig = {
     reactStrictMode: true, 
     trailingSlash: false,
-    ignoreDuringBuilds: true,
-};
-
-export default nextConfig;
+    eslint: {
+      ignoreDuringBuilds: true, 
+    },
+  };
+  
+  export default nextConfig;

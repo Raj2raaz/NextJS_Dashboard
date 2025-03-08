@@ -19,7 +19,7 @@ export default function Home() {
     };
 
     checkAuth();
-  }, [router]);
+  }, []);
 
   return <p>{loading ? "Checking authentication..." : "Redirecting..."}</p>;
 }
