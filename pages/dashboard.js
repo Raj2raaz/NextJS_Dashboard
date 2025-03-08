@@ -24,7 +24,7 @@ export default function Dashboard() {
     };
 
     checkAuth();
-  }, []);
+  }, [router]);
 
   const fetchData = async () => {
     if (!isAuthenticated) return;
@@ -41,7 +41,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (isAuthenticated) fetchData();
-  }, [isAuthenticated]); 
+  }, [isAuthenticated, fetchData]); 
 
   return (
     <div>
